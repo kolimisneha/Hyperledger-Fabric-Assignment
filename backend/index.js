@@ -37,6 +37,23 @@ app.get('/api/assets', (req, res) => {
     res.json(assets);
 });
 
+// GET endpoint to retrieve a single asset by dealerID
+app.get('/api/assets/:dealerID', (req, res) => {
+    try {
+        const { dealerID } = req.params;
+        const asset = assets.find(asset => asset.dealerID === dealerID);
+
+        if (!asset) {
+            return res.status(404).json({ message: 'Asset not found' });
+        }
+
+        res.json(asset);
+    } catch (error) {
+        console.error('Error retrieving asset:', error.message);
+        res.status(500).json({ error: 'An error occurred while retrieving the asset' });
+    }
+});
+
 // PUT endpoint to update an existing asset by dealerID
 app.put('/api/assets/:dealerID', (req, res) => {
     try {
