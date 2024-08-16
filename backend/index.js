@@ -37,6 +37,37 @@ app.get('/api/assets', (req, res) => {
     res.json(assets);
 });
 
+// PUT endpoint to update an existing asset by dealerID
+app.put('/api/assets/:dealerID', (req, res) => {
+    try {
+        const { dealerID } = req.params;
+        const { msisdn, mpin, balance, status, transAmount, transType, remarks } = req.body;
+
+        const assetIndex = assets.findIndex(asset => asset.dealerID === dealerID);
+
+        if (assetIndex === -1) {
+            return res.status(404).json({ message: 'Asset not found' });
+        }
+
+        // Update the asset details
+        assets[assetIndex] = {
+            ...assets[assetIndex],
+            msisdn: msisdn || assets[assetIndex].msisdn,
+            mpin: mpin || assets[assetIndex].mpin,
+            balance: balance || assets[assetIndex].balance,
+            status: status || assets[assetIndex].status,
+            transAmount: transAmount || assets[assetIndex].transAmount,
+            transType: transType || assets[assetIndex].transType,
+            remarks: remarks || assets[assetIndex].remarks
+        };
+
+        res.json({ message: 'Asset updated successfully', asset: assets[assetIndex] });
+    } catch (error) {
+        console.error('Error updating asset:', error.message);
+        res.status(500).json({ error: 'An error occurred while updating the asset' });
+    }
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
